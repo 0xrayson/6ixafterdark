@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6ix Afterdark — Temitope Sonaike</title>
+<meta name="description" content="6ix Afterdark — video editing and brand storytelling by Temitope Sonaike. Lagos, Nigeria.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0c0c;
+    --white:#ffffff;
+    --paper:#f6f4f1;
+    --red:#e10600;
+    --red-dark:#9c0400;
+    --grey:#7a7a7a;
+    --line:#e4e1db;
+    --maxw:1240px;
+    --ease:cubic-bezier(.16,.84,.44,1);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--white);
+    color:var(--ink);
+    font-family:'Space Grotesk', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  body.locked{ overflow:hidden; height:100vh; }
+  ::selection{background:var(--red); color:var(--white);}
+
+  h1,h2,h3,.display{
+    font-family:'Anton', sans-serif;
+    text-transform:uppercase;
+    font-weight:400;
+    line-height:0.94;
+    letter-spacing:-0.01em;
+  }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:var(--maxw); margin:0 auto; padding:0 32px;}
+
+  .reveal{opacity:0; transform:translateY(28px); transition:opacity .8s var(--ease), transform .8s var(--ease);}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  @media (prefers-reduced-motion: reduce){
+    .reveal{opacity:1; transform:none; transition:none;}
+    html{scroll-behavior:auto;}
+  }
+
+  /* ---------- preloader ---------- */
+  #preloader{
+    position:fixed; inset:0; z-index:9999; background:var(--ink); color:var(--white);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:22px;
+    transition:opacity .7s var(--ease), visibility .7s var(--ease);
+  }
+  #preloader.done{ opacity:0; visibility:hidden; pointer-events:none; }
+  #preloader .pl-mark{
+    font-family:'Anton', sans-serif; font-size:clamp(22px,3vw,30px); letter-spacing:0.02em; text-transform:uppercase;
+    display:flex; align-items:center; gap:8px;
+  }
+  #preloader .pl-mark .dot{width:7px; height:7px; border-radius:50%; background:var(--red);}
+  #preloader .pl-bar{ width:220px; height:1px; background:#2a2a2a; position:relative; overflow:hidden; }
+  #preloader .pl-bar span{ position:absolute; left:0; top:0; height:100%; width:0%; background:var(--red); }
+  #preloader .pl-pct{ font-family:'JetBrains Mono', monospace; font-size:13px; color:#8a8a8a; letter-spacing:0.05em; }
+
+  /* ---------- nav ---------- */
+  header{
+    position:sticky; top:0; z-index:100;
+    background:rgba(255,255,255,.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    max-width:var(--maxw); margin:0 auto; padding:18px 32px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+  }
+  .logo{
+    font-family:'Anton', sans-serif; font-size:20px; letter-spacing:0.02em;
+    text-transform:uppercase; display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .logo .dot{width:8px; height:8px; border-radius:50%; background:var(--red); display:inline-block;}
+  .logo sup{font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--grey); margin-left:2px;}
+
+  .nav-links{
+    display:flex; gap:10px; align-items:center; flex:1; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+  }
+  .nav-links a{position:relative; padding:4px 2px; color:var(--ink);}
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:0; width:0; height:2px; background:var(--red);
+    transition:width .3s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-links .slash{ color:var(--grey); opacity:.6; }
+
+  .nav-cta{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.06em; text-transform:uppercase;
+    background:var(--ink); color:var(--white); border:1px solid var(--ink);
+    padding:0 18px; height:38px; white-space:nowrap;
+    position:relative; overflow:hidden; display:flex; align-items:center;
+    transition:background .25s ease, border-color .25s ease;
+  }
+  .nav-cta:hover{ background:var(--red); border-color:var(--red); }
+  .cta-stack{ display:flex; flex-direction:column; transition:transform .45s var(--ease); }
+  .nav-cta:hover .cta-stack{ transform:translateY(-19px); }
+  .cta-stack span{ display:block; height:19px; line-height:19px; }
+
+  .burger{display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none;}
+  .burger span{width:24px; height:2px; background:var(--ink);}
+
+  /* ---------- hero ---------- */
+  .hero{ padding:120px 0 0; position:relative; overflow:hidden; }
+  .hero .wrap{position:relative; z-index:2;}
+  .hero-numeral{
+    position:absolute; top:-6vw; right:-2vw; z-index:1;
+    font-family:'Anton', sans-serif; font-size:44vw; line-height:1;
+    color:transparent; -webkit-text-stroke:1px var(--line); opacity:.9;
+    user-select:none; pointer-events:none;
+  }
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--grey); display:flex; align-items:center; gap:10px; margin-bottom:30px;
+  }
+  .eyebrow .rec{ width:8px; height:8px; border-radius:50%; background:var(--red); animation:blink 1.6s infinite; }
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+
+  .hero-title-mask{ overflow:hidden; }
+  .hero h1{
+    font-size:clamp(42px, 7.4vw, 104px); color:var(--ink); max-width:980px;
+    clip-path:inset(0 0 0 0);
+  }
+  .hero-title-mask.reveal{ opacity:1; transform:none; }
+  .hero-title-mask.reveal h1{
+    transform:translateY(105%);
+    transition:transform 1s var(--ease);
+  }
+  .hero-title-mask.reveal.in h1{ transform:translateY(0); }
+  .hero h1 .redline{color:var(--red);}
+
+  .hero-sub{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:40px;
+    margin-top:48px; flex-wrap:wrap; border-top:1px solid var(--line); padding-top:28px;
+  }
+  .hero-sub p{ max-width:520px; font-size:17px; line-height:1.65; color:#2a2a2a; }
+  .hero-sub .name-tag{
+    font-family:'JetBrains Mono', monospace; font-size:13px; color:var(--grey);
+    text-align:right; line-height:1.7; white-space:nowrap;
+  }
+  .hero-sub .name-tag b{color:var(--ink);}
+
+  .hero-rotator-row{
+    display:flex; align-items:center; gap:14px; margin-top:54px; padding-bottom:34px;
+    font-family:'JetBrains Mono', monospace; font-size:13px; letter-spacing:0.08em; text-transform:uppercase; color:var(--grey);
+  }
+  .hero-rotator{ position:relative; height:20px; width:170px; }
+  .hero-rotator span{
+    position:absolute; left:0; top:0; opacity:0; transform:translateY(6px);
+    transition:opacity .5s ease, transform .5s ease; color:var(--ink);
+  }
+  .hero-rotator span.active{ opacity:1; transform:translateY(0); }
+
+  /* ---------- ticker ---------- */
+  .ticker-band{ background:var(--red); color:var(--white); overflow:hidden; white-space:nowrap; padding:14px 0; border-top:1px solid var(--ink); border-bottom:1px solid var(--ink); }
+  .ticker-track{ display:inline-flex; animation:scroll-left 34s linear infinite; }
+  .ticker-track span{
+    font-family:'JetBrains Mono', monospace; font-size:14px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:0 28px; display:inline-flex; align-items:center; gap:28px;
+  }
+  @keyframes scroll-left{ from{transform:translateX(0);} to{transform:translateX(-50%);} }
+
+  /* ---------- section shell ---------- */
+  section{padding:120px 0;}
+  .section-head{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+    margin-bottom:60px; flex-wrap:wrap; border-bottom:1px solid var(--line); padding-bottom:24px;
+  }
+  .section-head .tag{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--red); margin-bottom:10px; display:block;
+  }
+  .section-head h2{font-size:clamp(32px, 5vw, 54px);}
+  .section-head .note{ font-size:14px; color:var(--grey); max-width:300px; font-family:'JetBrains Mono', monospace; line-height:1.6; }
+
+  /* ---------- manifesto ---------- */
+  .manifesto{ padding:100px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--paper); }
+  .manifesto .wrap{max-width:980px;}
+  .manifesto .tag{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--red); display:block; margin-bottom:28px; text-align:center;
+  }
+  .manifesto p{
+    font-family:'Space Grotesk', sans-serif; font-weight:600;
+    font-size:clamp(24px, 3.6vw, 42px); line-height:1.28; letter-spacing:-0.01em;
+    text-align:center; color:var(--ink);
+  }
+  .manifesto p .accent{
+    color:var(--red); background-image:linear-gradient(var(--red), var(--red));
+    background-repeat:no-repeat; background-position:0 100%; background-size:0% 2px;
+    transition:background-size 1.1s var(--ease) .3s;
+  }
+  .manifesto.in p .accent{ background-size:100% 2px; }
+
+  /* ---------- what we do ---------- */
+  .offerings{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--ink); }
+  .offer{ background:var(--white); padding:44px 34px; }
+  .offer .num{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--red); margin-bottom:36px; display:block; }
+  .offer h3{ font-size:24px; margin-bottom:16px; }
+  .offer p{ font-size:15px; color:#333; line-height:1.7; }
+  @media (max-width: 860px){ .offerings{grid-template-columns:1fr;} }
+  .offer:nth-child(1){transition-delay:0s;}
+  .offer:nth-child(2){transition-delay:.12s;}
+  .offer:nth-child(3){transition-delay:.24s;}
+
+  /* ---------- launches ---------- */
+  .launch-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--ink); }
+  .launch-card{
+    background:var(--ink); color:var(--white); padding:44px 34px; position:relative; overflow:hidden;
+    transition:background .35s ease;
+  }
+  .launch-card::before{
+    content:''; position:absolute; inset:0; background:linear-gradient(160deg, rgba(225,6,0,.14), transparent 60%);
+    opacity:0; transition:opacity .35s ease;
+  }
+  .launch-card:hover::before{ opacity:1; }
+  .launch-card:hover{ background:#141414; }
+  .launch-card .num{ font-size:12px; color:var(--red); margin-bottom:36px; display:block; }
+  .launch-card h3{ font-size:24px; margin-bottom:16px; color:var(--white); }
+  .launch-card p{ font-size:15px; color:#c8c8c8; line-height:1.7; position:relative; }
+  .launch-card:nth-child(1){transition-delay:0s;}
+  .launch-card:nth-child(2){transition-delay:.12s;}
+  .launch-card:nth-child(3){transition-delay:.24s;}
+  @media (max-width: 860px){ .launch-grid{grid-template-columns:1fr;} }
+
+  .ticker-alt{ background:var(--ink); color:var(--white); border-top:1px solid #2a2a2a; border-bottom:1px solid #2a2a2a; }
+  .ticker-track-rev{ animation:scroll-right 34s linear infinite; }
+  @keyframes scroll-right{ from{transform:translateX(-50%);} to{transform:translateX(0);} }
+
+  /* ---------- featured work (single case) ---------- */
+  .work-index{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--grey);
+    letter-spacing:0.08em; margin-bottom:18px; display:block;
+  }
+  .case{ border:1px solid var(--ink); background:var(--ink); color:var(--white); display:grid; grid-template-columns:1.1fr 1fr; }
+  .case-visual{
+    position:relative; background:linear-gradient(135deg, #1a1a1a 0%, #0c0c0c 60%);
+    padding:52px; display:flex; flex-direction:column; justify-content:space-between;
+    border-right:1px solid #2a2a2a; min-height:420px;
+  }
+  .case-visual .brand-eyebrow{ font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:#9a9a9a; }
+  .case-visual h3{ font-size:clamp(34px, 4.6vw, 56px); color:var(--white); margin-top:18px; }
+  .case-visual .frame-line{ height:1px; background:linear-gradient(90deg, var(--red), transparent); margin-top:26px; }
+  .case-visual .monogram{
+    font-family:'Anton', sans-serif; font-size:15vw; line-height:1; color:transparent;
+    -webkit-text-stroke:1px #2c2c2c; position:absolute; bottom:-4vw; right:-1vw; pointer-events:none;
+  }
+  .case-copy{ padding:52px; display:flex; flex-direction:column; justify-content:center; gap:26px; }
+  .case-copy p{ font-size:16px; line-height:1.75; color:#d6d6d6; }
+  .case-tags{ display:flex; flex-wrap:wrap; gap:10px; }
+  .case-tags span{
+    font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase;
+    border:1px solid #3a3a3a; padding:7px 12px; color:#c8c8c8;
+    transition:border-color .25s ease, color .25s ease;
+  }
+  .case-tags span:hover{ border-color:var(--red); color:var(--white); }
+  .case-visual .monogram{ animation:float 6s ease-in-out infinite; }
+  @keyframes float{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+  .case-cta{
+    display:inline-flex; align-items:center; gap:10px; align-self:flex-start;
+    font-family:'JetBrains Mono', monospace; font-size:12.5px; letter-spacing:0.06em; text-transform:uppercase;
+    color:var(--white); border-bottom:1px solid var(--red); padding-bottom:4px; transition:color .25s ease, border-color .25s ease;
+  }
+  .case-cta:hover{ color:var(--red); }
+  @media (max-width: 860px){
+    .case{grid-template-columns:1fr;}
+    .case-visual{border-right:none; border-bottom:1px solid #2a2a2a; min-height:280px;}
+  }
+
+  /* ---------- about ---------- */
+  .about-block{
+    display:grid; grid-template-columns:1fr 320px; gap:60px; align-items:start;
+    border-top:1px solid var(--ink); padding-top:52px;
+  }
+  .about-block p{ font-size:18px; line-height:1.8; color:#222; margin-bottom:20px; max-width:620px; }
+  .about-meta{ font-family:'JetBrains Mono', monospace; font-size:12.5px; }
+  .about-meta div{ display:flex; justify-content:space-between; padding:14px 0; border-top:1px solid var(--line); color:var(--grey); }
+  .about-meta div:last-child{ border-bottom:1px solid var(--line); }
+  .about-meta b{ color:var(--ink); font-weight:500; }
+  @media (max-width: 780px){ .about-block{grid-template-columns:1fr;} }
+
+  /* ---------- CTA / contact ---------- */
+  .contact{ background:var(--ink); color:var(--white); padding:140px 0 0; text-align:center; position:relative; overflow:hidden; }
+  .contact .tag{
+    font-family:'JetBrains Mono', monospace; font-size:12px; letter-spacing:0.12em; text-transform:uppercase;
+    color:var(--red); display:block; margin-bottom:26px;
+  }
+  .contact h2{ font-size:clamp(38px, 7vw, 84px); color:var(--white); margin-bottom:44px; }
+  .btn-red{
+    display:inline-flex; align-items:center; gap:10px; background:var(--red); color:var(--white);
+    font-family:'JetBrains Mono', monospace; font-size:14px; letter-spacing:0.05em; text-transform:uppercase;
+    padding:18px 34px; border:1px solid var(--red); transition:background .25s ease, color .25s ease;
+  }
+  .btn-red:hover{ background:transparent; color:var(--red); }
+  .contact-meta{
+    margin-top:56px; display:flex; justify-content:center; gap:48px; flex-wrap:wrap;
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:#8a8a8a; text-transform:uppercase; letter-spacing:0.05em;
+  }
+  .contact-meta a:hover{ color:var(--red); }
+
+  .closing-mark{
+    margin-top:110px; padding:36px 20px 40px;
+    display:flex; align-items:center; justify-content:center; gap:16px;
+    font-family:'Anton', sans-serif; text-transform:uppercase; font-weight:400;
+    font-size:clamp(28px, 4.4vw, 56px); line-height:1; letter-spacing:0.01em;
+    color:var(--white); border-top:1px solid #232323;
+    user-select:none;
+  }
+  .closing-mark .dot{
+    width:10px; height:10px; border-radius:50%; background:var(--red); flex-shrink:0;
+    animation:blink 1.6s infinite;
+  }
+
+  /* ---------- footer ---------- */
+  footer{
+    padding:24px 0; border-top:1px solid #1e1e1e; background:var(--ink);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:#8a8a8a; text-transform:uppercase; letter-spacing:0.04em;
+  }
+
+  @media (max-width: 900px){
+    .nav-links{display:none;}
+    .burger{display:flex;}
+    section{padding:80px 0;}
+    .hero{padding:100px 0 0;}
+    .hero-rotator-row{display:none;}
+  }
+</style>
+</head>
+<body class="locked">
+
+<div id="preloader">
+  <div class="pl-mark"><span class="dot"></span>6ix Afterdark</div>
+  <div class="pl-bar"><span id="plFill"></span></div>
+  <div class="pl-pct mono"><span id="plPct">0</span>%</div>
+</div>
+
+<header>
+  <nav>
+    <a href="#top" class="logo"><span class="dot"></span>6ix Afterdark<sup>&reg;</sup></a>
+    <div class="nav-links">
+      <a href="#launches">Launches</a><span class="slash">/</span>
+      <a href="#work">Work</a><span class="slash">/</span>
+      <a href="#services">Stories</a><span class="slash">/</span>
+      <a href="#about">About</a>
+    </div>
+    <a class="nav-cta" href="https://www.instagram.com/6ix.afterdark_" target="_blank" rel="noopener">
+      <span class="cta-stack"><span>Let's Talk</span><span>Let's Talk</span></span>
+    </a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+</header>
+
+<main id="top">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-numeral">06</div>
+    <div class="wrap">
+      <div class="eyebrow reveal"><span class="rec"></span>(Est. 2026 — Version 1.0)</div>
+      <div class="hero-title-mask reveal">
+        <h1>WE MAKE THE CUT <span class="redline">NO ONE SCROLLS PAST.</span></h1>
+      </div>
+      <div class="hero-sub reveal">
+        <p>6ix Afterdark is the editing house of Temitope Sonaike — brand stories and short-form work built frame by frame, in the hours after everyone else has logged off.</p>
+        <div class="name-tag">TEMITOPE SONAIKE<br><b>Director / Editor</b><br>6ix Afterdark</div>
+      </div>
+      <div class="hero-rotator-row reveal">
+        <span>—</span>
+        <div class="hero-rotator" id="heroRotator">
+          <span class="active">Brand Stories</span>
+          <span>Short-Form</span>
+          <span>Motion Direction</span>
+        </div>
+        <span>—</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- TICKER -->
+  <div class="ticker-band">
+    <div class="ticker-track">
+      <span>BRAND STORIES <b>&bull;</b> SHORT-FORM <b>&bull;</b> MOTION DIRECTION <b>&bull;</b> KINETIC TYPOGRAPHY <b>&bull;</b> WEDDING FILMS <b>&bull;</b> CAPCUT <b>&bull;</b> DAVINCI RESOLVE <b>&bull;</b></span>
+      <span>BRAND STORIES <b>&bull;</b> SHORT-FORM <b>&bull;</b> MOTION DIRECTION <b>&bull;</b> KINETIC TYPOGRAPHY <b>&bull;</b> WEDDING FILMS <b>&bull;</b> CAPCUT <b>&bull;</b> DAVINCI RESOLVE <b>&bull;</b></span>
+    </div>
+  </div>
+
+  <!-- MANIFESTO -->
+  <section class="manifesto reveal">
+    <div class="wrap">
+      <span class="tag">// Philosophy</span>
+      <p>Good editing hides. Great editing is felt. Every cut out of 6ix Afterdark is built on the belief that <span class="accent">attention isn't captured by accident</span> — it's engineered, one deliberate frame at a time.</p>
+    </div>
+  </section>
+
+  <!-- WHAT WE DO -->
+  <section id="services">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="tag">// What We Do</span>
+          <h2>Built with<br>intent.</h2>
+        </div>
+        <p class="note">Three disciplines, one standard — nothing leaves the timeline until it earns the watch.</p>
+      </div>
+
+      <div class="offerings reveal">
+        <div class="offer">
+          <span class="num">01</span>
+          <h3>Brand Stories</h3>
+          <p>A brand film has one job: make someone feel something before they've read a word of copy. Every story out of 6ix Afterdark is built shot-first and sound-second, because that's the order people actually experience it in.</p>
+        </div>
+        <div class="offer">
+          <span class="num">02</span>
+          <h3>Short-Form</h3>
+          <p>The feed doesn't care about budget — it cares about the first second. Every short-form edit is cut to survive a thumb moving fast: clean, deliberate, and built to be watched all the way through, not scrolled past.</p>
+        </div>
+        <div class="offer">
+          <span class="num">03</span>
+          <h3>Wedding Films</h3>
+          <p>A wedding happens once. The edit is what's left. Every film is treated less like a highlight reel and more like a scene — paced, scored and cut to be rewatched for years, not just shared once.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED WORK -->
+  <section id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="tag">// Featured Work</span>
+          <h2>The work.</h2>
+        </div>
+        <p class="note">More stories in motion, regularly, on Instagram.</p>
+      </div>
+
+      <span class="work-index mono reveal">( 01 / 01 )</span>
+
+      <div class="case reveal">
+        <div class="case-visual">
+          <div>
+            <span class="brand-eyebrow">Emporio Armani — Brand Film</span>
+            <h3>Stronger<br>With You</h3>
+          </div>
+          <div class="frame-line"></div>
+          <div class="monogram">AD</div>
+        </div>
+        <div class="case-copy">
+          <p>A creative direction and edit built around Emporio Armani's "Stronger With You" fragrance — pacing, color grade and sound design directed to move like a campaign film, cut with the same discipline as a paid brief.</p>
+          <div class="case-tags">
+            <span>Brand Story</span>
+            <span>Spec Campaign</span>
+            <span>Motion Direction</span>
+          </div>
+          <a class="case-cta" href="https://www.instagram.com/6ix.afterdark_" target="_blank" rel="noopener">Watch the full edit &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LAUNCHES -->
+  <section id="launches">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="tag">// Launches</span>
+          <h2>Built for<br>launch day.</h2>
+        </div>
+        <p class="note">One shot to land the story right — the edit is what carries it.</p>
+      </div>
+
+      <div class="launch-grid">
+        <div class="launch-card reveal">
+          <span class="num mono">01</span>
+          <h3>Product Drops</h3>
+          <p>A new product or feature, cut to hit inside the first three seconds and hold the room past them.</p>
+        </div>
+        <div class="launch-card reveal">
+          <span class="num mono">02</span>
+          <h3>Brand Reveals</h3>
+          <p>The moment a name goes public — paced to reset the narrative, not just announce it.</p>
+        </div>
+        <div class="launch-card reveal">
+          <span class="num mono">03</span>
+          <h3>Campaign Rollouts</h3>
+          <p>One launch film split into a full week of short-form, without ever losing the thread.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker-band ticker-alt">
+    <div class="ticker-track ticker-track-rev">
+      <span>LAUNCH READY <b>&bull;</b> ON BRIEF <b>&bull;</b> ON TIME <b>&bull;</b> FRAME PERFECT <b>&bull;</b> BUILT AFTER DARK <b>&bull;</b> 6IX AFTERDARK <b>&bull;</b></span>
+      <span>LAUNCH READY <b>&bull;</b> ON BRIEF <b>&bull;</b> ON TIME <b>&bull;</b> FRAME PERFECT <b>&bull;</b> BUILT AFTER DARK <b>&bull;</b> 6IX AFTERDARK <b>&bull;</b></span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <div>
+          <span class="tag">// About</span>
+          <h2>The house<br>behind the name.</h2>
+        </div>
+      </div>
+
+      <div class="about-block reveal">
+        <div>
+          <p>6ix Afterdark is built and directed by Temitope Sonaike, an editor working out of Lagos with an engineer's eye for detail — trained first in Computer Engineering, sharpened since on the timeline.</p>
+          <p>The name is literal. The work happens after dark, in the hours reserved for the fourth pass nobody asked for: the frame trimmed by two units, the sound that sits half a beat early, the difference most people never consciously notice, but always feel.</p>
+        </div>
+        <div class="about-meta">
+          <div><span>Location</span><b>Lagos, Nigeria</b></div>
+          <div><span>Tools</span><b>DaVinci Resolve, CapCut</b></div>
+          <div><span>Focus</span><b>Brand, Short-Form, Weddings</b></div>
+          <div><span>Founded</span><b>2026</b></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <span class="tag reveal">// Get In Touch</span>
+      <h2 class="reveal">Make the cut<br>worth watching.</h2>
+      <a class="btn-red reveal" href="https://www.instagram.com/6ix.afterdark_" target="_blank" rel="noopener">DM on Instagram &rarr;</a>
+      <div class="contact-meta reveal">
+        <a href="https://www.instagram.com/6ix.afterdark_" target="_blank" rel="noopener">Instagram — @6ix.afterdark_</a>
+        <span>Lagos, Nigeria</span>
+      </div>
+      <div class="closing-mark reveal"><span class="dot"></span>6ix Afterdark<sup class="mono" style="font-size:.28em; color:var(--grey); margin-left:2px;">&reg;</sup></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap" style="width:100%; display:flex; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <span>&copy; 2026 6ix Afterdark</span>
+    <span>Temitope Sonaike — Director / Editor</span>
+  </div>
+</footer>
+
+<script>
+  // ---------- preloader ----------
+  (function(){
+    var pct = 0;
+    var pctEl = document.getElementById('plPct');
+    var fillEl = document.getElementById('plFill');
+    var preloader = document.getElementById('preloader');
+    var duration = 1300; // ms
+    var start = null;
+
+    function step(ts){
+      if(!start) start = ts;
+      var elapsed = ts - start;
+      var progress = Math.min(elapsed / duration, 1);
+      pct = Math.floor(progress * 100);
+      pctEl.textContent = pct;
+      fillEl.style.width = pct + '%';
+      if(progress < 1){
+        window.requestAnimationFrame(step);
+      } else {
+        finishLoad();
+      }
+    }
+
+    function finishLoad(){
+      preloader.classList.add('done');
+      document.body.classList.remove('locked');
+      setTimeout(function(){
+        if(preloader && preloader.parentNode){
+          preloader.parentNode.removeChild(preloader);
+        }
+      }, 800);
+    }
+
+    window.requestAnimationFrame(step);
+    // safety net in case rAF stalls
+    setTimeout(function(){
+      if(!preloader.classList.contains('done')){ finishLoad(); }
+    }, duration + 600);
+  })();
+
+  // ---------- scroll reveal ----------
+  var items = document.querySelectorAll('.reveal');
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:0.12});
+  items.forEach(function(i){ io.observe(i); });
+
+  // ---------- hero rotator ----------
+  (function(){
+    var rotator = document.getElementById('heroRotator');
+    if(!rotator) return;
+    var spans = rotator.querySelectorAll('span');
+    var idx = 0;
+    setInterval(function(){
+      spans[idx].classList.remove('active');
+      idx = (idx + 1) % spans.length;
+      spans[idx].classList.add('active');
+    }, 2200);
+  })();
+
+  // ---------- staggered reveal within groups ----------
+  document.querySelectorAll('.about-meta, .contact-meta').forEach(function(group){
+    Array.prototype.forEach.call(group.children, function(child, i){
+      child.style.transitionDelay = (i * 0.08) + 's';
+    });
+  });
+
+  // ---------- parallax on hero numeral + closing mark ----------
+  (function(){
+    var heroNum = document.querySelector('.hero-numeral');
+    var closing = document.querySelector('.closing-mark');
+    var ticking = false;
+    function onScroll(){
+      if(ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){
+        var y = window.scrollY || window.pageYOffset;
+        if(heroNum){ heroNum.style.transform = 'translateY(' + (y * 0.12) + 'px)'; }
+        if(closing){
+          var rect = closing.getBoundingClientRect();
+          var vh = window.innerHeight;
+          if(rect.top < vh && rect.bottom > 0){
+            var progress = 1 - (rect.top / vh);
+            closing.style.transform = 'translateY(' + ((1 - Math.min(Math.max(progress,0),1)) * 24) + 'px)';
+          }
+        }
+        ticking = false;
+      });
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+    onScroll();
+  })();
+
+  // ---------- magnetic hover on buttons ----------
+  (function(){
+    if(window.matchMedia('(hover: hover) and (pointer: fine)').matches === false) return;
+    var targets = document.querySelectorAll('.nav-cta, .btn-red, .case-cta');
+    targets.forEach(function(el){
+      el.style.transition = el.style.transition ? el.style.transition + ', transform .25s ease' : 'transform .25s ease';
+      el.addEventListener('mousemove', function(e){
+        var r = el.getBoundingClientRect();
+        var x = e.clientX - r.left - r.width / 2;
+        var y = e.clientY - r.top - r.height / 2;
+        el.style.transform = 'translate(' + (x * 0.18) + 'px,' + (y * 0.28) + 'px)';
+      });
+      el.addEventListener('mouseleave', function(){
+        el.style.transform = 'translate(0,0)';
+      });
+    });
+  })();
+
+  // ---------- custom cursor dot ----------
+  (function(){
+    if(window.matchMedia('(hover: hover) and (pointer: fine)').matches === false) return;
+    var dot = document.createElement('div');
+    dot.id = 'cursorDot';
+    dot.style.cssText = 'position:fixed;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#e10600;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .2s ease,height .2s ease,background .2s ease;mix-blend-mode:difference;';
+    document.body.appendChild(dot);
+    window.addEventListener('mousemove', function(e){
+      dot.style.left = e.clientX + 'px';
+      dot.style.top = e.clientY + 'px';
+    });
+    document.querySelectorAll('a, button').forEach(function(el){
+      el.addEventListener('mouseenter', function(){ dot.style.width = '26px'; dot.style.height = '26px'; });
+      el.addEventListener('mouseleave', function(){ dot.style.width = '9px'; dot.style.height = '9px'; });
+    });
+  })();
+
+  // ---------- mobile nav ----------
+  var burger = document.getElementById('burger');
+  var menuOpen = false;
+  burger.addEventListener('click', function(){
+    menuOpen = !menuOpen;
+    var links = document.querySelector('.nav-links');
+    if(menuOpen){
+      links.style.display = 'flex';
+      links.style.position = 'absolute';
+      links.style.top = '64px';
+      links.style.left = '0';
+      links.style.right = '0';
+      links.style.background = '#fff';
+      links.style.flexDirection = 'column';
+      links.style.padding = '24px 32px';
+      links.style.borderBottom = '1px solid #e4e1db';
+      links.style.gap = '16px';
+    } else {
+      links.removeAttribute('style');
+    }
+  });
+</script>
+
+</body>
+</html>
