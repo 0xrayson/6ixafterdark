@@ -615,19 +615,44 @@ section {
   }
 }
 
-/* ---------- featured work (single case) ---------- */
+/* ---------- featured work (carousel) ---------- */
+.case-nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.case-nav-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.case-nav-btn:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
 .work-index {
   font-family: 'JetBrains Mono', monospace;
   font-size: 12px;
   color: var(--grey);
   letter-spacing: 0.08em;
-  margin-bottom: 18px;
-  display: block;
 }
 .case {
   border: 1px solid var(--ink);
   background: var(--ink);
   color: var(--white);
+  overflow: hidden;
+}
+.case-grid {
   display: grid;
   grid-template-columns: 1.1fr 1fr;
 }
@@ -637,7 +662,8 @@ section {
   padding: 52px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 32px;
   border-right: 1px solid #2a2a2a;
   min-height: 420px;
 }
@@ -653,22 +679,14 @@ section {
   color: var(--white);
   margin-top: 18px;
 }
-.case-visual .frame-line {
-  height: 1px;
-  background: linear-gradient(90deg, var(--red), transparent);
-  margin-top: 26px;
-}
-.case-visual .monogram {
-  font-family: 'Anton', sans-serif;
-  font-size: 15vw;
-  line-height: 1;
-  color: transparent;
-  -webkit-text-stroke: 1px #2c2c2c;
-  position: absolute;
-  bottom: -4vw;
-  right: -1vw;
-  pointer-events: none;
-  animation: float 6s ease-in-out infinite;
+.case-video {
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  background: #000;
+  display: block;
+  border-radius: 12px;
 }
 .case-copy {
   padding: 52px;
@@ -701,15 +719,6 @@ section {
   border-color: var(--red);
   color: var(--white);
 }
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-14px);
-  }
-}
 .case-cta {
   display: inline-flex;
   align-items: center;
@@ -728,7 +737,7 @@ section {
   color: var(--red);
 }
 @media (max-width: 860px) {
-  .case {
+  .case-grid {
     grid-template-columns: 1fr;
   }
   .case-visual {
